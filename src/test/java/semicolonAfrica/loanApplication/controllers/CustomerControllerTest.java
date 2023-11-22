@@ -14,6 +14,7 @@ import semicolonAfrica.loanApplication.dtos.requests.LoanRequest;
 import semicolonAfrica.loanApplication.dtos.requests.LoginRequest;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -52,6 +53,7 @@ public class CustomerControllerTest {
         loanRequest.setAmount(new BigDecimal("500000"));
         loanRequest.setPurpose("School fees");
         loanRequest.setLoanPreference(LoanPreference.WEEKLY);
+
 
     }
 
@@ -94,15 +96,32 @@ public class CustomerControllerTest {
 
 
     @Test
-    public void customerCanApplyForLoanTest(){
-    try{
-        mockMvc.perform(post("/api/v1/customer/loanApplication").
-                content(objectMapper.writeValueAsBytes(loanRequest)).
-                contentType(MediaType.APPLICATION_JSON)).
-                andExpect(status().is2xxSuccessful()).
-                andDo(print());
-    }catch (Exception exception){
-        exception.printStackTrace();
-}
-}
-}
+    public void customerCanApplyForLoanTest() {
+        try {
+            mockMvc.perform(post("/api/v1/customer/loanApplication").
+                            content(objectMapper.writeValueAsBytes(loanRequest)).
+                            contentType(MediaType.APPLICATION_JSON)).
+                    andExpect(status().is2xxSuccessful()).
+                    andDo(print());
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Test
+        public void checkLoanStatus() {
+            Long customerId = 1L;
+            Long loanId = 6L;
+
+            try {
+                mockMvc.perform(post("/api/v1/customer/viewLoanApplication")
+                                .content(objectMapper.writeValueAsBytes(List.of(customerId, loanId)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                        .andExpect(status().is2xxSuccessful())
+                        .andDo(print());
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+
+    }
