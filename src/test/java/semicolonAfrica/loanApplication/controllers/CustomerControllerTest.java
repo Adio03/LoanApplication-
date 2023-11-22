@@ -114,7 +114,7 @@ public class CustomerControllerTest {
             Long loanId = 6L;
 
             try {
-                mockMvc.perform(post("/api/v1/customer/viewLoanApplication")
+                mockMvc.perform(post("/api/v1/customer/{customerId}/{loanId}")
                                 .content(objectMapper.writeValueAsBytes(List.of(customerId, loanId)))
                                 .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(status().is2xxSuccessful())
