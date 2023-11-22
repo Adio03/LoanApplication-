@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import semicolonAfrica.loanApplication.dtos.requests.CustomerRequest;
+import semicolonAfrica.loanApplication.dtos.requests.LoanRequest;
 import semicolonAfrica.loanApplication.dtos.requests.LoginRequest;
 import semicolonAfrica.loanApplication.dtos.responses.CustomerResponse;
+import semicolonAfrica.loanApplication.dtos.responses.LoanApplicationResponse;
 import semicolonAfrica.loanApplication.dtos.responses.LoginResponse;
 import semicolonAfrica.loanApplication.exception.CustomerAlreadyExist;
 import semicolonAfrica.loanApplication.exception.CustomerNotFound;
@@ -41,6 +43,15 @@ public class CustomerServiceController {
         LoginResponse loginResponse = customerService.login(loginRequest);
         return new ResponseEntity<>(loginResponse.getMessage(),HttpStatus.OK);
     }catch (CustomerNotFound exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+    }
+    @PostMapping("/loanApplication")
+    public ResponseEntity<?> applyForLoan(@RequestBody LoanRequest loanRequest){
+    try {
+        LoanApplicationResponse loanApplicationResponse = customerService.applyForLoan(loanRequest);
+        return  new ResponseEntity<>(loanApplicationResponse.getMessage(),HttpStatus.OK);
+    } catch (CustomerNotFound exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
     }

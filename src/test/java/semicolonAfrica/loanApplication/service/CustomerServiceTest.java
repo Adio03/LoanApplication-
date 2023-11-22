@@ -4,6 +4,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Transactional;
+import semicolonAfrica.loanApplication.data.models.LoanApplicationStatus;
 import semicolonAfrica.loanApplication.data.models.LoanPreference;
 import semicolonAfrica.loanApplication.dtos.requests.CustomerRequest;
 import semicolonAfrica.loanApplication.dtos.requests.LoanRequest;
@@ -42,14 +45,14 @@ CustomerServiceTest {
         customerRequest.setPhoneNumber("07011223344");
         customerRequest.setPassword("password");
         customerRequest.setAge(20);
-        customerRequest.setAddress("No 19,sabo lagos mainland");
+
 
         loginRequest = new LoginRequest();
         loginRequest.setEmail("tonyMiracle@gmail.com");
         loginRequest.setPassword("password");
 
         loanRequest = new LoanRequest();
-        loanRequest.setCustomerRequest(customerRequest);
+        loanRequest.setCustomerId(1L);
         loanRequest.setAmount(new BigDecimal("500000"));
         loanRequest.setPurpose("School fees");
         loanRequest.setLoanPreference(LoanPreference.WEEKLY);
@@ -71,7 +74,8 @@ CustomerServiceTest {
      assertNotNull(loginResponse.getMessage());
 
 }
-
+    @Transactional
+    @Rollback(false)
     @Test
     public void applyLoanTest() throws CustomerNotFound {
         LoanApplicationResponse  loanApplicationResponse = customerService.applyForLoan(loanRequest);
@@ -82,15 +86,13 @@ CustomerServiceTest {
     }
 
 @Test
-    public void customerCanCheckLoanStatus(){
-        Long loanId = 1L;
+    public void customerCanCheckLoanStatus() throws CustomerNotFound {
+        Long loanId = 6L;
         Long customerId=1L;
 
-    Optional<LoanApplicationResponse> loanApplicationResponse = customerService.viewLoanStatus(customerId,loanId);
+    LoanApplicationStatus loanApplicationResponse = customerService.viewLoanStatus(customerId,loanId);
         assertNotNull(loanApplicationResponse);
-    System.out.println("------>"+loanApplicationResponse);
-        assertTrue(loanApplicationResponse.isPresent());
-        assertNotNull(loanApplicationResponse.get().getLoanApplicationStatus());
+
 
 }
 

@@ -14,11 +14,11 @@ public class LoanAgreement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private BigDecimal amount;
-    @Column(nullable = false)
     private double interestRate;
     @Column(nullable = false)
     private String loanTerm;
+    @OneToOne
+    private LoanApplications loanApplications;
 
 
 

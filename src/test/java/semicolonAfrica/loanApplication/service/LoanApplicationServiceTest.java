@@ -51,7 +51,7 @@ public class LoanApplicationServiceTest {
     customerRequest.setAddress("No 19,sabo lagos mainland");
 
     loanRequest = new LoanRequest();
-    loanRequest.setCustomerRequest(customerRequest);
+    loanRequest.setCustomerId(100L);
     loanRequest.setAmount(new BigDecimal("500000"));
     loanRequest.setPurpose("School fees");
     loanRequest.setLoanPreference(WEEKLY);

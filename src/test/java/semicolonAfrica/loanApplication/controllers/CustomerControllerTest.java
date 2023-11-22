@@ -48,7 +48,7 @@ public class CustomerControllerTest {
         loginRequest.setPassword("password20");
 
         loanRequest = new LoanRequest();
-        loanRequest.setCustomerRequest(request);
+        loanRequest.setCustomerId(1L);
         loanRequest.setAmount(new BigDecimal("500000"));
         loanRequest.setPurpose("School fees");
         loanRequest.setLoanPreference(LoanPreference.WEEKLY);

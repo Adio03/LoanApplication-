@@ -17,16 +17,15 @@ public class LoanApplications {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
-    @ManyToOne
-    private Customer customer;
     @Column(nullable = false)
-    private BigDecimal bigDecimal;
+    private Long customerId;
+    @Column(nullable = false)
+    private BigDecimal amount;
     @Column(nullable = false)
     private String purpose;
     @Enumerated(EnumType.STRING)
     private LoanPreference loanPreference;
     @Enumerated(EnumType.STRING)
     private LoanApplicationStatus loanApplicationStatus;
-    @OneToOne
-    private LoanAgreement loanAgreement;
+
 }

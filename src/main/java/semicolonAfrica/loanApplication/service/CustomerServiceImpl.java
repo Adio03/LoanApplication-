@@ -1,9 +1,9 @@
 package semicolonAfrica.loanApplication.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import semicolonAfrica.loanApplication.data.models.Customer;
+import semicolonAfrica.loanApplication.data.models.LoanApplicationStatus;
 import semicolonAfrica.loanApplication.data.models.LoanApplications;
 import semicolonAfrica.loanApplication.data.repositories.CustomerRepository;
 import semicolonAfrica.loanApplication.dtos.requests.CustomerRequest;
@@ -17,7 +17,7 @@ import semicolonAfrica.loanApplication.exception.CustomerNotFound;
 
 import java.util.Optional;
 
-import static semicolonAfrica.loanApplication.data.models.LoanApplicationStatus.IN_PROGRESS;
+import static semicolonAfrica.loanApplication.data.models.LoanApplicationStatus.PENDING;
 import static semicolonAfrica.loanApplication.utils.PasswordEncoder.hashPassword;
 
 
@@ -43,7 +43,6 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setPhoneNumber(customerRequest.getPhoneNumber());
         customer.setPassword(encodePassword);
         customer.setAge(customerRequest.getAge());
-        customer.setAddress(customerRequest.getAddress());
         customerRepository.save(customer);
 
         return new CustomerResponse();
@@ -70,19 +69,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public LoanApplicationResponse applyForLoan(LoanRequest loanRequest) throws CustomerNotFound {
         LoanApplications loanApplications = new LoanApplications();
-        var customer = customerRepository.findByEmail(loanRequest.getCustomerRequest().getEmail()).
+        var customer = customerRepository.findById(loanRequest.getCustomerId()).
                 orElseThrow(() -> new CustomerNotFound("customer does not exist"));
-
+        Long extractTheCustomerId = customer.getId();
         if (customer.isLogin()) {
-            loanApplications.setCustomer(customer);
-            loanApplications.setBigDecimal(loanRequest.getAmount());
+            loanApplications.setCustomerId(extractTheCustomerId);
+            loanApplications.setAmount(loanRequest.getAmount());
             loanApplications.setPurpose(loanRequest.getPurpose());
             loanApplications.setLoanPreference(loanRequest.getLoanPreference());
-            loanApplications.setLoanApplicationStatus(IN_PROGRESS);
+            loanApplications.setLoanApplicationStatus(PENDING);
 
             LoanApplicationResponse save = loanApplicationsService.appliedLoan(loanApplications);
 
-            System.out.println(save);
             LoanApplicationResponse response = new LoanApplicationResponse();
             response.setLoanId(save.getLoanId());
             response.setCustomerId(save.getCustomerId());
@@ -93,21 +91,23 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Optional<LoanApplicationResponse> viewLoanStatus(Long customerId, Long loanId) {
-        Optional<LoanApplications>loanApplications = loanApplicationsService.findLoanById(loanId);
-        if (loanApplications.isPresent()){
-            LoanApplications toGetLoanApplication = loanApplications.get();
-            Long extractedCustomerId = toGetLoanApplication.getCustomer().getId();
-            if(extractedCustomerId.equals(customerId)){
+    public LoanApplicationStatus viewLoanStatus(Long customerId, Long loanId) throws CustomerNotFound {
+        Optional<LoanApplications> loanApplications = loanApplicationsService.findLoanById(loanId);
+
+        if (loanApplications.isPresent()) {
+            LoanApplications loanApplication = loanApplications.get();
+            Long extractedCustomerId = loanApplication.getCustomerId();
+
+            if (extractedCustomerId.equals(customerId)) {
                 LoanApplicationResponse response = new LoanApplicationResponse();
-                response.setLoanApplicationStatus(toGetLoanApplication.getLoanApplicationStatus());
-                System.out.println(response);
-                return Optional.of(response);
+                response.setLoanApplicationStatus(loanApplication.getLoanApplicationStatus());
+                System.out.println(response.getLoanApplicationStatus());
+                return response.getLoanApplicationStatus();
             }
+        } else {
+            throw new CustomerNotFound("Customer not found");
         }
 
-        return Optional.empty();
+        return null;
     }
-
-
 }

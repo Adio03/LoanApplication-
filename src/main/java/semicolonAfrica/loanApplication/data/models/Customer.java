@@ -31,8 +31,6 @@ public class Customer {
     private String password;
     @Column(nullable = false)
     private int age;
-    @Column(nullable = false)
-    private String address;
     private boolean isLogin;
     @OneToMany
     private List<LoanApplications> loanApplications;

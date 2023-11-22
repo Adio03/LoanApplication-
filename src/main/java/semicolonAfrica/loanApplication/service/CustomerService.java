@@ -1,6 +1,7 @@
 package semicolonAfrica.loanApplication.service;
 
 import semicolonAfrica.loanApplication.data.models.Customer;
+import semicolonAfrica.loanApplication.data.models.LoanApplicationStatus;
 import semicolonAfrica.loanApplication.dtos.requests.CustomerRequest;
 import semicolonAfrica.loanApplication.dtos.requests.LoanRequest;
 import semicolonAfrica.loanApplication.dtos.requests.LoginRequest;
@@ -18,5 +19,5 @@ public interface CustomerService {
     LoginResponse login (LoginRequest loginRequest) throws CustomerNotFound;
     Optional<Customer> findCustomerByEmail(String email);
     LoanApplicationResponse applyForLoan(LoanRequest loanRequest) throws CustomerNotFound;
-   Optional< LoanApplicationResponse> viewLoanStatus(Long customerId,Long loanId);
+   LoanApplicationStatus viewLoanStatus(Long customerId, Long loanId) throws CustomerNotFound;
 }

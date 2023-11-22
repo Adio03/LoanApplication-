@@ -2,6 +2,8 @@ package semicolonAfrica.loanApplication.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import semicolonAfrica.loanApplication.data.models.Customer;
+import semicolonAfrica.loanApplication.data.models.LoanAgreement;
 import semicolonAfrica.loanApplication.data.models.LoanApplications;
 import semicolonAfrica.loanApplication.data.repositories.LoanApplicationsRepository;
 import semicolonAfrica.loanApplication.dtos.responses.LoanApplicationResponse;
@@ -18,13 +20,17 @@ public class LoanApplicationsServiceImpl implements LoanApplicationsService {
 
 
 
+
     @Override
     public LoanApplicationResponse appliedLoan(LoanApplications  loanApplications) throws CustomerNotFound {
+
        var savedLoan = loanApplicationsRepository.save(loanApplications);
+
        LoanApplicationResponse loanApplicationResponse = new LoanApplicationResponse();
        loanApplicationResponse.setLoanId(savedLoan.getId());
-       loanApplicationResponse.setCustomerId(savedLoan.getId());
-       loanApplicationResponse.setAmount(savedLoan.getBigDecimal());
+       loanApplicationResponse.setCustomerId(savedLoan.getCustomerId());
+       loanApplicationResponse.setAmount(savedLoan.getAmount());
+
        return loanApplicationResponse;
     }
 
